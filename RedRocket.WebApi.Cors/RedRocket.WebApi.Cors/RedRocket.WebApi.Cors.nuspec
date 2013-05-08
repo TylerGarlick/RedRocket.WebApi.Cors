@@ -28,5 +28,8 @@ using this tokenized nuspec file.
       <dependency id="WebActivatorEx"/>
     </dependencies>
   </metadata>
-  <files />
+  <files>
+    <file src="bin\release\RedRocket.WebApi.Cors.dll" target="lib\net45" />
+    <file src="Content\App_Start\CorsConfig.cs.pp" target="Content\App_Start" />
+  </files>
 </package>
