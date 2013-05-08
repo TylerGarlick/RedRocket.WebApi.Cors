@@ -21,6 +21,7 @@ using this tokenized nuspec file.
     <projectUrl>https://github.com/TylerGarlick/RedRocket.WebApi.Cors</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>CORS Handler, Nothing more</description>
+    <tags>Cors, Web API, Red Rocket</tags>
     <dependencies>
       <dependency id="Microsoft.AspNet.WebApi.Core"/>
       <dependency id="WebActivatorEx"/>
