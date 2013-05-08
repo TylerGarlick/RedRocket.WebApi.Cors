@@ -17,9 +17,7 @@ using this tokenized nuspec file.
     <version>$version$</version>
     <authors>Tyler Garlick</authors>
     <id>RedRocket.WebApi.Cors</id>
-    <title>
-      Asp.NET WebAPI CORS
-    </title>
+    <title>RedRocket Framework | WebApi Cors</title>
     <projectUrl>https://github.com/TylerGarlick/RedRocket.WebApi.Cors</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>CORS Handler, Nothing more</description>
