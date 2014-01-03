@@ -20,47 +20,40 @@ namespace RedRocket.WebApi.Cors
         const string AccessControlAllowMethods = "Access-Control-Allow-Methods";
         const string AccessControlAllowHeaders = "Access-Control-Allow-Headers";
 
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            bool isCorsRequest = request.Headers.Contains(Origin);
-            bool isPreflightRequest = request.Method == HttpMethod.Options;
+            var isCorsRequest = request.Headers.Contains(Origin);
+            var isPreflightRequest = request.Method == HttpMethod.Options;
+
             if (isCorsRequest)
             {
                 if (isPreflightRequest)
                 {
-                    HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
-                    response.Headers.Add(AccessControlAllowOrigin, request.Headers.GetValues(Origin).First());
+                    var response = new HttpResponseMessage(HttpStatusCode.OK);
 
-                    string accessControlRequestMethod = request.Headers.GetValues(AccessControlRequestMethod).FirstOrDefault();
+                    if (!response.Headers.Contains(AccessControlAllowOrigin))
+                        response.Headers.Add(AccessControlAllowOrigin, request.Headers.GetValues(Origin).First());
+
+                    var accessControlRequestMethod = request.Headers.GetValues(AccessControlRequestMethod).FirstOrDefault();
                     if (accessControlRequestMethod != null)
-                    {
                         response.Headers.Add(AccessControlAllowMethods, accessControlRequestMethod);
-                    }
 
-                    string requestedHeaders = string.Join(", ", request.Headers.GetValues(AccessControlRequestHeaders));
+                    var requestedHeaders = string.Join(", ", request.Headers.GetValues(AccessControlRequestHeaders));
                     if (!string.IsNullOrEmpty(requestedHeaders))
-                    {
                         response.Headers.Add(AccessControlAllowHeaders, requestedHeaders);
-                    }
 
-                    TaskCompletionSource<HttpResponseMessage> tcs = new TaskCompletionSource<HttpResponseMessage>();
-                    tcs.SetResult(response);
-                    return tcs.Task;
+                    return response;
                 }
-                else
-                {
-                    return base.SendAsync(request, cancellationToken).ContinueWith<HttpResponseMessage>(t =>
-                    {
-                        HttpResponseMessage resp = t.Result;
-                        resp.Headers.Add(AccessControlAllowOrigin, request.Headers.GetValues(Origin).First());
-                        return resp;
-                    });
-                }
+
+                var baseResponse = await base.SendAsync(request, cancellationToken);
+
+                if (!baseResponse.Headers.Contains(AccessControlAllowOrigin))
+                    baseResponse.Headers.Add(AccessControlAllowOrigin, request.Headers.GetValues(Origin).First());
+
+                return baseResponse;
             }
-            else
-            {
-                return base.SendAsync(request, cancellationToken);
-            }
+
+            return await base.SendAsync(request, cancellationToken);
         }
     }
 }
